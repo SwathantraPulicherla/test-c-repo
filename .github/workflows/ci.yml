@@ -40,6 +40,11 @@ jobs:
           git clone https://github.com/ThrowTheSwitch/Unity.git unity
         fi
 
+    - name: Clean build directory
+      run: |
+        rm -rf build/
+        rm -rf tests/generated/
+
     - name: Generate and run AI-powered tests
       run: |
         python ../universal-c-testgen/src/scripts/run_testgen.py . --build --run --coverage
