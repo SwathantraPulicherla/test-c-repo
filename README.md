@@ -38,3 +38,4 @@ For local testing:
 - Requires C source files with corresponding headers.# Trigger CI
 # Python 3.8 compatibility fix
 # Test AI fixes
+# Test dependency analyzer fix
