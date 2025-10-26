@@ -24,10 +24,12 @@ target_link_libraries(main_app ctestgen_lib)
 
 # Find all generated test files
 file(GLOB GENERATED_TESTS "tests/generated/*_test.c")
+message(STATUS "Found generated test files: ${GENERATED_TESTS}")
 
 # Create test executables for each generated test
 foreach(TEST_FILE ${GENERATED_TESTS})
     get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+    message(STATUS "Creating test executable: ${TEST_NAME} from ${TEST_FILE}")
     add_executable(${TEST_NAME} ${TEST_FILE} unity/src/unity.c)
     target_link_libraries(${TEST_NAME} ctestgen_lib)
     target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
@@ -61,7 +63,7 @@ if(LCOV AND GENHTML AND NOT WIN32)
         COMMAND ${LCOV} --directory . --zerocounters
 
         # Run all test executables dynamically
-        COMMAND bash -c "for exe in test_*; do if [ -x \"$exe\" ]; then echo \"Running $exe...\"; ./$exe || echo \"$exe failed\"; fi; done"
+        COMMAND sh -c "for exe in test_*; do if [ -x \"$exe\" ]; then echo \"Running $exe...\"; ./$exe || echo \"$exe failed\"; fi; done"
 
         # Capture coverage data
         COMMAND ${LCOV} --directory . --capture --output-file coverage.info
