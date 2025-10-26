@@ -51,7 +51,7 @@ jobs:
       if: success()
       with:
         name: coverage-report
-        path: build/coverage-report/
+        path: coverage-report/
         retention-days: 30
 
     - name: Create test summary
