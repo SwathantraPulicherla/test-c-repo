@@ -23,7 +23,7 @@ add_executable(main_app src/main.c)
 target_link_libraries(main_app ctestgen_lib)
 
 # Find all generated test files
-file(GLOB GENERATED_TESTS "${CMAKE_SOURCE_DIR}/tests/generated/*_test.c")
+file(GLOB GENERATED_TESTS "${CMAKE_SOURCE_DIR}/tests/generated/test_*.c")
 message(STATUS "Found generated test files: ${GENERATED_TESTS}")
 message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
@@ -66,7 +66,7 @@ if(LCOV AND GENHTML AND NOT WIN32)
 
         # Run all test executables dynamically
         COMMAND ${CMAKE_COMMAND} -E echo "Running test executables..."
-        COMMAND sh -c "for exe in test_*; do [ -x \"$exe\" ] && echo \"Running $exe...\" && ./$exe; done || true"
+        COMMAND bash -c "for exe in test_*; do if [ -x \"$exe\" ]; then echo \"Running $exe...\"; ./$exe; fi; done"
 
         # Capture coverage data
         COMMAND ${LCOV} --directory . --capture --output-file coverage.info
