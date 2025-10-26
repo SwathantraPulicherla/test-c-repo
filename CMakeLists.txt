@@ -9,7 +9,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 
 # Include directories
-include_directories(unity/src)
+include_directories(unity)
 include_directories(src)
 
 # Find all source files in src directory
@@ -32,7 +32,7 @@ message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 foreach(TEST_FILE ${GENERATED_TESTS})
     get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
     message(STATUS "Creating test executable: ${TEST_NAME} from ${TEST_FILE}")
-    add_executable(${TEST_NAME} ${TEST_FILE} unity/src/unity.c)
+    add_executable(${TEST_NAME} ${TEST_FILE} unity/unity.c)
     target_link_libraries(${TEST_NAME} ctestgen_lib)
     target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
 
