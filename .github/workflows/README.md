@@ -44,6 +44,7 @@ Settings → Secrets and variables → Actions → New repository secret
 Name: GEMINI_API_KEY
 Value: your_google_gemini_api_key
 ```
+**Note**: The workflow uses `GOOGLE_API_KEY` environment variable internally, but you should name the secret `GEMINI_API_KEY` for clarity.
 
 ### 2. Project Structure
 ```
