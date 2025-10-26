@@ -60,8 +60,8 @@ if(LCOV AND GENHTML AND NOT WIN32)
         # Clean previous coverage data
         COMMAND ${LCOV} --directory . --zerocounters
 
-        # Run all test executables dynamically (handle both Windows and Linux)
-        COMMAND bash -c "exe_ext=$([ \"$OSTYPE\" = \"msys\" ] && echo \".exe\" || echo \"\"); for exe in test_*$$exe_ext; do echo \"Running $$exe...\"; ./$$exe || echo \"$$exe failed\"; done"
+        # Run all test executables dynamically
+        COMMAND bash -c "for exe in test_*; do if [ -x \"$exe\" ]; then echo \"Running $exe...\"; ./$exe || echo \"$exe failed\"; fi; done"
 
         # Capture coverage data
         COMMAND ${LCOV} --directory . --capture --output-file coverage.info
