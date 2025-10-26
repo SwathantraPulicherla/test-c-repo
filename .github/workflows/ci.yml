@@ -45,11 +45,19 @@ jobs:
         rm -rf build/
         rm -rf tests/generated/
 
-    - name: Generate and run AI-powered tests
+    - name: Generate AI-powered tests
       run: |
-        python ../universal-c-testgen/src/scripts/run_testgen.py . --build --run --coverage
+        python ../universal-c-testgen/src/scripts/run_testgen.py . --api-key ${{ secrets.GEMINI_API_KEY }}
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+    - name: Validate and fix generated tests
+      run: |
+        python ../universal-c-testgen/src/scripts/validate_generated_tests.py tests/generated/
+
+    - name: Build, run tests, and generate coverage
+      run: |
+        python ../universal-c-testgen/src/scripts/build_system.py . --run --coverage
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
