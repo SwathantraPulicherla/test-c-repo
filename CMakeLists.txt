@@ -60,10 +60,8 @@ if(LCOV AND GENHTML AND NOT WIN32)
         # Clean previous coverage data
         COMMAND ${LCOV} --directory . --zerocounters
 
-        # Run test executables directly
-        COMMAND test_main.exe || echo "test_main.exe failed"
-        COMMAND test_temp_converter.exe || echo "test_temp_converter.exe failed"
-        COMMAND test_temp_sensor.exe || echo "test_temp_sensor.exe failed"
+        # Run all test executables dynamically (handle both Windows and Linux)
+        COMMAND bash -c "exe_ext=$([ \"$OSTYPE\" = \"msys\" ] && echo \".exe\" || echo \"\"); for exe in test_*$$exe_ext; do echo \"Running $$exe...\"; ./$$exe || echo \"$$exe failed\"; done"
 
         # Capture coverage data
         COMMAND ${LCOV} --directory . --capture --output-file coverage.info
@@ -72,7 +70,7 @@ if(LCOV AND GENHTML AND NOT WIN32)
         COMMAND ${LCOV} --remove coverage.info '*/unity/*' '*/tests/*' '*/build/*' --output-file coverage_filtered.info
 
         # Generate HTML report
-        COMMAND ${GENHTML} coverage_filtered.info --output-directory coverage-report
+        COMMAND ${GENHTML} coverage_filtered.info --output-directory ../coverage-report
 
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Generating coverage report..."
