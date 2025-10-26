@@ -5,7 +5,7 @@ import sys
 # Configure API key - set GOOGLE_API_KEY environment variable
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
-model = genai.GenerativeModel('models/gemini-2.5-flash')
+model = genai.GenerativeModel('models/gemini-2.5-pro')
 
 def generate_test(c_code):
     prompt = f"""Generate comprehensive unit tests for the following C code using the Unity testing framework.
