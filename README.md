@@ -39,3 +39,4 @@ For local testing:
 # Python 3.8 compatibility fix
 # Test AI fixes
 # Test dependency analyzer fix
+# Trigger CI with C syntax fix
