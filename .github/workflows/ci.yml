@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.8'
+        python-version: '3.11'
 
     - name: Install system dependencies
       run: |
@@ -28,7 +28,7 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        pip install google-generativeai==0.8.5
+        pip install google-generativeai
 
     - name: Clone universal-c-testgen tool
       run: |
