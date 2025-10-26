@@ -28,7 +28,7 @@ jobs:
 
     - name: Install Python dependencies
       run: |
-        pip install google-generativeai
+        pip install google-generativeai==0.8.5
 
     - name: Clone universal-c-testgen tool
       run: |
