@@ -1,5 +1,8 @@
 name: AI Test Generation
 
+# Automated AI-powered unit test generation for C projects
+# Triggers on push to main/develop branches or when issues are labeled 'ai-test-generate'
+
 on:
   push:
     branches: [ main, develop ]

@@ -2,6 +2,8 @@
 
 A clean C development repository for temperature sensor functionality with converter utilities.
 
+<!-- AI Test Generation Trigger -->
+
 ## Project Structure
 
 ```
