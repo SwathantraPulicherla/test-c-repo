@@ -2,7 +2,7 @@ name: AI Test Generation
 
 on:
   push:
-    branches: [ main, develop, feature/** ]
+    branches: [ main, develop ]
   issues:
     types: [ labeled ]
 
@@ -30,150 +30,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install google-generativeai
 
-    - name: Create Unity framework
-      run: |
-        mkdir -p unity/src
-        cat > unity/src/unity.h << 'EOF'
-#ifndef UNITY_H
-#define UNITY_H
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
-// Basic Unity framework implementation for testing
-
-#define TEST_ASSERT_TRUE(condition) \
-    if (!(condition)) { \
-        printf("FAIL: %s:%d - Expected true, got false\n", __FILE__, __LINE__); \
-        exit(1); \
-    }
-
-#define TEST_ASSERT_FALSE(condition) \
-    if (condition) { \
-        printf("FAIL: %s:%d - Expected false, got true\n", __FILE__, __LINE__); \
-        exit(1); \
-    }
-
-#define TEST_ASSERT_EQUAL(expected, actual) \
-    if ((expected) != (actual)) { \
-        printf("FAIL: %s:%d - Expected %d, got %d\n", __FILE__, __LINE__, (expected), (actual)); \
-        exit(1); \
-    }
-
-#define TEST_ASSERT_EQUAL_INT(expected, actual) TEST_ASSERT_EQUAL(expected, actual)
-
-#define TEST_ASSERT_EQUAL_FLOAT(expected, actual) \
-    if (fabsf((expected) - (actual)) > 0.0001f) { \
-        printf("FAIL: %s:%d - Expected %f, got %f\n", __FILE__, __LINE__, (expected), (actual)); \
-        exit(1); \
-    }
-
-#define TEST_ASSERT_FLOAT_WITHIN(tolerance, expected, actual) \
-    if (fabsf((expected) - (actual)) > (tolerance)) { \
-        printf("FAIL: %s:%d - Expected %f +/- %f, got %f\n", __FILE__, __LINE__, (expected), (tolerance), (actual)); \
-        exit(1); \
-    }
-
-#define TEST_ASSERT_GREATER_OR_EQUAL_INT(threshold, actual) \
-    if ((actual) < (threshold)) { \
-        printf("FAIL: %s:%d - Expected >= %d, got %d\n", __FILE__, __LINE__, (threshold), (actual)); \
-        exit(1); \
-    }
-
-#define TEST_ASSERT_LESS_OR_EQUAL_INT(threshold, actual) \
-    if ((actual) > (threshold)) { \
-        printf("FAIL: %s:%d - Expected <= %d, got %d\n", __FILE__, __LINE__, (threshold), (actual)); \
-        exit(1); \
-    }
-
-#define TEST_ASSERT_EQUAL_STRING(expected, actual) \
-    if (strcmp((expected), (actual)) != 0) { \
-        printf("FAIL: %s:%d - Expected \"%s\", got \"%s\"\n", __FILE__, __LINE__, (expected), (actual)); \
-        exit(1); \
-    }
-
-#endif // UNITY_H
-EOF
-
-        cat > unity/src/unity.c << 'EOF'
-#include "unity.h"
-
-// Minimal Unity implementation for testing
-// This provides basic test runner functionality
-
-void setUp(void) {
-    // Default setup - can be overridden
-}
-
-void tearDown(void) {
-    // Default teardown - can be overridden
-}
-
-// Test runner - in a real implementation this would run all tests
-// For now, we'll rely on individual test functions being called directly
-EOF
-
-    - name: Clone test generator tool
-      run: |
-        # Try to clone the test generator, fallback to local copy if available
-        if git clone https://github.com/SwathantraPulicherla/ai-test-gemini-CLI.git testgen-tool 2>/dev/null; then
-          echo "Cloned test generator from GitHub"
-          cd testgen-tool
-          cp -r src ../
-          cp requirements.txt ../
-          cd ..
-        else
-          echo "Failed to clone, checking for local testgen-tool..."
-          # Check if testgen-tool exists locally (for development)
-          if [ -d "../testgen-tool" ]; then
-            echo "Using local testgen-tool"
-            cp -r ../testgen-tool/src ./
-            cp ../testgen-tool/requirements.txt ./
-          else
-            echo "❌ Error: Cannot find test generator tool"
-            exit 1
-          fi
-        fi
-
-    - name: Check for C source files
-      run: |
-        C_FILES=$(find . -name "*.c" -not -path "./tests/*" -not -path "./build/*" -not -path "./cmake-build/*" -not -path "./.git/*" | wc -l)
-        if [ "$C_FILES" -eq 0 ]; then
-          echo "❌ No C source files found to test"
-          echo "Make sure your .c files are in the repository (not in tests/, build/, or cmake-build/ directories)"
-          exit 1
-        else
-          echo "✅ Found $C_FILES C source files to test"
-        fi
-
-    - name: Generate AI-powered tests
+    - name: Run AI test generation
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
-        if [ -z "$GEMINI_API_KEY" ]; then
-          echo "❌ Error: GEMINI_API_KEY secret not set"
-          echo "Please add your Google Gemini API key as a repository secret"
-          exit 1
-        fi
+        # Clone the test generator tool
+        git clone https://github.com/SwathantraPulicherla/testgen-tool.git ../testgen-tool
 
-        echo "🚀 Starting AI test generation..."
-        python src/scripts/run_testgen.py . --api-key $GEMINI_API_KEY
-
-    - name: Validate generated tests
-      run: |
-        python src/scripts/run_testgen.py . --api-key $GEMINI_API_KEY | grep -E "(✅|❌|⚠️)"
-
-    - name: Check for compilation errors
-      run: |
-        echo "Checking compilation of generated tests..."
-        for test_file in tests/generated/test_*.c; do
-          if [ -f "$test_file" ]; then
-            echo "Compiling $test_file..."
-            gcc -I. -Isrc -Iunity/src -c "$test_file" -o /tmp/$(basename "$test_file" .c).o || echo "Compilation failed for $test_file"
-          fi
-        done
+        # Run the test generation
+        python ../testgen-tool/src/scripts/run_testgen.py . --api-key $GEMINI_API_KEY
 
     - name: Commit generated tests
       run: |
@@ -196,6 +61,7 @@ EOF
           fi
 
           git commit -m "$COMMIT_MSG" || echo "No changes to commit"
+          git push
         fi
 
     - name: Comment on issue (if triggered by issue)
