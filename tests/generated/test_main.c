@@ -94,3 +94,13 @@ void test_main_hot_temperature_flow(void) {
     TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
     TEST_ASSERT_EQUAL(1, check_temperature_status_call_count);
 }
+    
+    // Verify the last returned value matches the last configured value
+    float temp = get_temperature_celsius(); // Third call
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 30.0f, temp);
+    TEST_ASSERT_EQUAL(3, stub_get_temperature_celsius_call_count);
+}
+
+
+// --- MAIN TEST RUNNER ---
+
