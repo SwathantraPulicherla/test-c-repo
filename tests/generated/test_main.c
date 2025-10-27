@@ -2,105 +2,58 @@
 #include "temp_sensor.h"
 #include "temp_converter.h"
 
-// Stubs
-static int get_temperature_celsius_call_count;
-static float get_temperature_celsius_return_value;
-static int check_temperature_status_call_count;
-static const char* check_temperature_status_return_value;
+// ====================================================================
+// Stub Implementations for functions that need stubs
+// ====================================================================
 
-float get_temperature_celsius(void) {
-  get_temperature_celsius_call_count++;
-  return get_temperature_celsius_return_value;
+static float get_temperature_celsius_Return;
+static int get_temperature_celsius_CallCount;
+
+float get_temperature_celsius() {
+    get_temperature_celsius_CallCount++;
+    return get_temperature_celsius_Return;
 }
 
-const char* check_temperature_status(float temp_c) {
-  check_temperature_status_call_count++;
-  return check_temperature_status_return_value;
-}
+// ====================================================================
+// SetUp / TearDown functions for Unity
+// ====================================================================
 
 void setUp(void) {
-    get_temperature_celsius_call_count = 0;
-    get_temperature_celsius_return_value = 0.0f;
-    check_temperature_status_call_count = 0;
-    check_temperature_status_return_value = "NORMAL";
+    // Reset stub states before each test
+    get_temperature_celsius_Return = 0.0f;
+    get_temperature_celsius_CallCount = 0;
 }
 
 void tearDown(void) {
-    // Reset stubs
-    get_temperature_celsius_call_count = 0;
-    check_temperature_status_call_count = 0;
+    // No specific cleanup needed after each test for this module
 }
 
-void test_main_normal_temperature_flow(void) {
-    // Setup: Normal temperature scenario
-    get_temperature_celsius_return_value = 25.0f;
-    check_temperature_status_return_value = "NORMAL";
+// ====================================================================
+// Tests for temp_converter.h functions
+// (These are the functions 'main' from src/main.c would use,
+// and are the testable units according to the "Test functions individually,
+// not main() or complex workflows" rule, while providing necessary stubs.)
+// ====================================================================
 
-    // Exercise: Call the functions as main() does
-    float temp = get_temperature_celsius();
-    const char* status = check_temperature_status(temp);
-
-    // Verify: Check both function calls and return values
-    TEST_ASSERT_FLOAT_WITHIN(0.01f, 25.0f, temp);
-    TEST_ASSERT_EQUAL_STRING("NORMAL", status);
-    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
-    TEST_ASSERT_EQUAL(1, check_temperature_status_call_count);
+void test_check_temperature_status_cold(void) {
+    TEST_ASSERT_EQUAL_STRING("Cold", check_temperature_status(0.0f));
+    TEST_ASSERT_EQUAL_STRING("Cold", check_temperature_status(-10.0f));
+    TEST_ASSERT_EQUAL_STRING("Cold", check_temperature_status(9.99f)); // Just below 10.0, still cold
 }
 
-void test_main_critical_temperature_flow(void) {
-    // Setup: Critical temperature scenario
-    get_temperature_celsius_return_value = 100.0f;
-    check_temperature_status_return_value = "CRITICAL";
-
-    // Exercise
-    float temp = get_temperature_celsius();
-    const char* status = check_temperature_status(temp);
-
-    // Verify
-    TEST_ASSERT_FLOAT_WITHIN(0.01f, 100.0f, temp);
-    TEST_ASSERT_EQUAL_STRING("CRITICAL", status);
-    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
-    TEST_ASSERT_EQUAL(1, check_temperature_status_call_count);
+void test_check_temperature_status_normal(void) {
+    TEST_ASSERT_EQUAL_STRING("Normal", check_temperature_status(10.0f)); // Lower boundary for normal
+    TEST_ASSERT_EQUAL_STRING("Normal", check_temperature_status(20.0f));
+    TEST_ASSERT_EQUAL_STRING("Normal", check_temperature_status(29.99f)); // Just below 30.0, still normal
 }
 
-void test_main_cold_temperature_flow(void) {
-    // Setup: Cold temperature scenario
-    get_temperature_celsius_return_value = -15.0f;
-    check_temperature_status_return_value = "COLD";
-
-    // Exercise
-    float temp = get_temperature_celsius();
-    const char* status = check_temperature_status(temp);
-
-    // Verify
-    TEST_ASSERT_FLOAT_WITHIN(0.01f, -15.0f, temp);
-    TEST_ASSERT_EQUAL_STRING("COLD", status);
-    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
-    TEST_ASSERT_EQUAL(1, check_temperature_status_call_count);
+void test_check_temperature_status_hot(void) {
+    TEST_ASSERT_EQUAL_STRING("Hot", check_temperature_status(30.0f)); // Lower boundary for hot
+    TEST_ASSERT_EQUAL_STRING("Hot", check_temperature_status(35.0f));
+    TEST_ASSERT_EQUAL_STRING("Hot", check_temperature_status(45.5f)); // High temperature
 }
 
-void test_main_hot_temperature_flow(void) {
-    // Setup: Hot temperature scenario
-    get_temperature_celsius_return_value = 90.0f;
-    check_temperature_status_return_value = "HOT";
-
-    // Exercise
-    float temp = get_temperature_celsius();
-    const char* status = check_temperature_status(temp);
-
-    // Verify
-    TEST_ASSERT_FLOAT_WITHIN(0.01f, 90.0f, temp);
-    TEST_ASSERT_EQUAL_STRING("HOT", status);
-    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
-    TEST_ASSERT_EQUAL(1, check_temperature_status_call_count);
-}
-    
-    // Verify the last returned value matches the last configured value
-    float temp = get_temperature_celsius(); // Third call
-    TEST_ASSERT_FLOAT_WITHIN(0.01f, 30.0f, temp);
-    TEST_ASSERT_EQUAL(3, stub_get_temperature_celsius_call_count);
-}
-
-
-// --- MAIN TEST RUNNER ---
+// ====================================================================
+// Main function to run all tests
+// ====================================================================
 
