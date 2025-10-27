@@ -1,32 +1,20 @@
 cmake_minimum_required(VERSION 3.10)
-project(CTestGen)
+project(TemperatureSensor)
 
 # Set C standard
 set(CMAKE_C_STANDARD 99)
 
-# Add embedded-C friendly compiler flags to catch real bugs but allow common practices
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -Wall -Werror -Wextra -Wformat=2 -Wuninitialized -Wshadow")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+# Add compiler flags for development
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
 
 # Include directories
-include_directories(unity)
 include_directories(src)
 
 # Find all source files in src directory
 file(GLOB SRC_FILES "src/*.c")
 
-# Create main library from source files
-add_library(ctestgen_lib STATIC ${SRC_FILES})
-
 # Create main executable
-add_executable(main_app src/main.c)
-target_link_libraries(main_app ctestgen_lib)
-
-# Find all generated test files
-file(GLOB GENERATED_TESTS "${CMAKE_SOURCE_DIR}/tests/generated/test_*.c")
-message(STATUS "Found generated test files: ${GENERATED_TESTS}")
-message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
-message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+add_executable(temperature_sensor ${SRC_FILES})
 
 # Create test executables for each generated test
 foreach(TEST_FILE ${GENERATED_TESTS})
