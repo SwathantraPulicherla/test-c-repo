@@ -43,3 +43,4 @@ For local testing:
 # Test validation script syntax fix
 # Test improved AI test generation
 # Test AI retry logic for validation failures
+# Test source code quality fixes
