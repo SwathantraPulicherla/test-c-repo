@@ -50,3 +50,4 @@ This repository contains only the core source code for development. All test-rel
 - `float celsius_to_fahrenheit(float temp_c)` - Convert Celsius to Fahrenheit
 - `bool is_temperature_rising(float prev_temp, float current_temp, float threshold)` - Check if temperature is rising
 - `float get_temperature_celsius(void)` - Get current temperature reading
+# Test trigger
