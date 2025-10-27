@@ -34,8 +34,8 @@ jobs:
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
-        # Clone the test generator tool
-        git clone https://github.com/SwathantraPulicherla/testgen-tool.git ../testgen-tool
+        # Clone the test generator tool with authentication
+        git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/SwathantraPulicherla/testgen-tool.git ../testgen-tool
 
         # Run the test generation
         python ../testgen-tool/src/scripts/run_testgen.py . --api-key $GEMINI_API_KEY
