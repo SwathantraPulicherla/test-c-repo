@@ -7,15 +7,15 @@ int read_temperature_raw() {
 }
 
 bool validate_temperature_range(float temp_c) {
-    return temp_c >= -40.0 && temp_c <= 125.0;
+    return temp_c >= -40.0f && temp_c <= 125.0f;
 }
 
 const char* check_temperature_status(float temp_c) {
-    if (temp_c > 120.0) {
+    if (temp_c > 120.0f) {
         return "CRITICAL";
-    } else if (temp_c > 85.0) {
+    } else if (temp_c > 85.0f) {
         return "HOT";
-    } else if (temp_c < -10.0) {
+    } else if (temp_c < -10.0f) {
         return "COLD";
     } else {
         return "NORMAL";

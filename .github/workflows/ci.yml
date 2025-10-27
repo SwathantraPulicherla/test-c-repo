@@ -45,6 +45,10 @@ jobs:
         rm -rf build/
         rm -rf tests/generated/
 
+    - name: Validate source code quality
+      run: |
+        python ../universal-c-testgen/src/scripts/validate_source_code.py src/
+
     - name: Generate and validate AI-powered tests with retry
       run: |
         MAX_RETRIES=3

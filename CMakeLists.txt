@@ -4,8 +4,8 @@ project(CTestGen)
 # Set C standard
 set(CMAKE_C_STANDARD 99)
 
-# Add strict compilation flags to catch AI syntax errors
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -Wall -Werror -Wpedantic -Wextra -Wdouble-promotion -Wformat=2 -Wuninitialized")
+# Add embedded-C friendly compiler flags to catch real bugs but allow common practices
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -Wall -Werror -Wextra -Wformat=2 -Wuninitialized -Wconversion -Wshadow")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 
 # Include directories
