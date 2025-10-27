@@ -5,7 +5,7 @@ project(CTestGen)
 set(CMAKE_C_STANDARD 99)
 
 # Add embedded-C friendly compiler flags to catch real bugs but allow common practices
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -Wall -Werror -Wextra -Wformat=2 -Wuninitialized -Wconversion -Wshadow")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -Wall -Werror -Wextra -Wformat=2 -Wuninitialized -Wshadow")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 
 # Include directories

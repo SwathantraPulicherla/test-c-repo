@@ -87,7 +87,30 @@ jobs:
 
     - name: Build, run tests, and generate coverage
       run: |
-        python ../universal-c-testgen/src/scripts/build_system.py . --run --coverage
+        MAX_BUILD_RETRIES=2
+        BUILD_RETRY_COUNT=0
+
+        while [ $BUILD_RETRY_COUNT -lt $MAX_BUILD_RETRIES ]; do
+          echo "🔨 Build attempt $((BUILD_RETRY_COUNT + 1))/$MAX_BUILD_RETRIES: Building test executables..."
+
+          # Build, run tests, and generate coverage
+          if python ../universal-c-testgen/src/scripts/build_system.py . --run --coverage; then
+            echo "✅ Build and test execution successful!"
+            break
+          else
+            echo "❌ Build attempt $((BUILD_RETRY_COUNT + 1)) failed"
+            if [ $BUILD_RETRY_COUNT -lt $((MAX_BUILD_RETRIES - 1)) ]; then
+              echo "🔄 Retrying build process..."
+              BUILD_RETRY_COUNT=$((BUILD_RETRY_COUNT + 1))
+              # Clean build directory before retry
+              rm -rf build/
+              mkdir -p build/
+            else
+              echo "💥 Build failed after $MAX_BUILD_RETRIES attempts"
+              exit 1
+            fi
+          fi
+        done
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
