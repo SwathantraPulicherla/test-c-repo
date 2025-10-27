@@ -40,3 +40,4 @@ For local testing:
 # Test AI fixes
 # Test dependency analyzer fix
 # Trigger CI with C syntax fix
+# Test validation script syntax fix
