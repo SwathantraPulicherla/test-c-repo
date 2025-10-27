@@ -45,15 +45,41 @@ jobs:
         rm -rf build/
         rm -rf tests/generated/
 
-    - name: Generate AI-powered tests
+    - name: Generate and validate AI-powered tests with retry
       run: |
-        python ../universal-c-testgen/src/scripts/run_testgen.py . --api-key ${{ secrets.GEMINI_API_KEY }}
+        MAX_RETRIES=3
+        RETRY_COUNT=0
+
+        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+          echo "🔄 Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES: Generating AI-powered tests..."
+
+          # Generate tests
+          python ../universal-c-testgen/src/scripts/run_testgen.py . --api-key ${{ secrets.GEMINI_API_KEY }}
+
+          echo "🔍 Validating generated tests..."
+          # Validate tests (don't fail on error, capture exit code)
+          python ../universal-c-testgen/src/scripts/validate_generated_tests.py tests/generated/ --no-exit
+          VALIDATION_EXIT_CODE=$?
+
+          if [ $VALIDATION_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test generation and validation successful!"
+            break
+          else
+            echo "❌ Validation failed on attempt $((RETRY_COUNT + 1))"
+            if [ $RETRY_COUNT -lt $((MAX_RETRIES - 1)) ]; then
+              echo "🔄 Retrying test generation..."
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              # Clean generated tests before retry
+              rm -rf tests/generated/
+              mkdir -p tests/generated/
+            else
+              echo "💥 Maximum retries ($MAX_RETRIES) exceeded. Build failed."
+              exit 1
+            fi
+          fi
+        done
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
-    - name: Validate and fix generated tests
-      run: |
-        python ../universal-c-testgen/src/scripts/validate_generated_tests.py tests/generated/
 
     - name: Build, run tests, and generate coverage
       run: |
