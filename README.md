@@ -1,46 +1,52 @@
-# Universal C Test Generator Setup
+# Temperature Sensor C Project
 
-This repository uses an AI-powered test generator for C code using the Unity testing framework.
+A clean C development repository for temperature sensor functionality with converter utilities.
 
-## Setup for New Repositories
+## Project Structure
 
-To use this in any C repository:
+```
+├── src/
+│   ├── main.c              # Main application entry point
+│   ├── temp_sensor.c       # Temperature sensor implementation
+│   ├── temp_sensor.h       # Temperature sensor header
+│   ├── temp_converter.c    # Temperature conversion utilities
+│   └── temp_converter.h    # Temperature converter header
+├── CMakeLists.txt          # CMake build configuration
+├── Makefile               # GNU Make build configuration
+└── README.md             # This file
+```
 
-1. **Add the workflow**: Copy `.github/workflows/test.yml` to your repository.
+## Features
 
-2. **Set up Google Gemini API**:
-   - Go to [Google AI Studio](https://aistudio.google.com/) and get an API key.
-   - In your GitHub repository, go to Settings > Secrets and variables > Actions.
-   - Add a new repository secret named `GOOGLE_API_KEY` with your API key.
+- **Temperature Sensor**: Core temperature reading functionality
+- **Temperature Converter**: Convert between Celsius and Fahrenheit
+- **Cross-platform**: Builds on Linux, macOS, and Windows
+- **Multiple build systems**: CMake and GNU Make support
 
-3. **Repository Structure**:
-   - Place your C source files in `src/` (e.g., `src/my_module.c`, `src/my_module.h`).
-   - Ensure your code has header files for the functions you want to test.
+## Building
 
-4. **Push your code**: On push or PR, the workflow will:
-   - Set up the Unity framework and test generator.
-   - Generate tests for all `.c` files in `src/`.
-   - Build and run the tests.
+### Using CMake (Recommended)
+```bash
+mkdir build
+cd build
+cmake ..
+make
+./temperature_sensor
+```
 
-## Local Development
+### Using Make
+```bash
+make
+./temperature_sensor
+```
 
-For local testing:
+## Development
 
-1. Run `./setup_testgen.sh` to add the necessary files.
-2. Set `export GOOGLE_API_KEY=your_key`.
-3. Generate tests: `python generate_tests.py src/your_file.c`.
-4. Run tests: `make test`.
+This repository contains only the core source code for development. All test-related files and AI test generation tools have been removed to maintain a clean development environment.
 
-## Notes
+## Functions
 
-- Tests are generated in `tests/generated/` and not committed to the repository.
-- The tool uses Gemini AI to analyze your code and create comprehensive test cases.
-- Requires C source files with corresponding headers.# Trigger CI
-# Python 3.8 compatibility fix
-# Test AI fixes
-# Test dependency analyzer fix
-# Trigger CI with C syntax fix
-# Test validation script syntax fix
-# Test improved AI test generation
-# Test AI retry logic for validation failures
-# Test source code quality fixes
+- `float raw_to_celsius(int raw_value)` - Convert raw ADC value to Celsius
+- `float celsius_to_fahrenheit(float temp_c)` - Convert Celsius to Fahrenheit
+- `bool is_temperature_rising(float prev_temp, float current_temp, float threshold)` - Check if temperature is rising
+- `float get_temperature_celsius(void)` - Get current temperature reading
