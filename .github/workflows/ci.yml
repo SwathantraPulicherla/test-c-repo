@@ -67,8 +67,19 @@ jobs:
 
     - name: Fix flaky AI-generated tests
       run: |
-        echo "� Applying fixes to AI-generated tests..."
+        echo "🔧 Applying fixes to AI-generated tests..."
         python ../universal-c-testgen/src/scripts/fix_flaky_tests.py
+
+    - name: Validate generated tests compile
+      run: |
+        echo "🔍 Validating that all generated tests compile individually..."
+        python ../universal-c-testgen/src/scripts/compile_validation.py tests/generated/
+        COMPILE_EXIT_CODE=$?
+
+        if [ $COMPILE_EXIT_CODE -ne 0 ]; then
+          echo "❌ Some test files have compilation errors - cannot proceed with build"
+          exit 1
+        fi
 
     - name: Build and run tests
       run: |
