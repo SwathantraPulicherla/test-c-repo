@@ -49,26 +49,18 @@ jobs:
       run: |
         python ../universal-c-testgen/src/scripts/validate_source_code.py src/
 
-    - name: Generate and validate AI-powered tests
+    - name: Generate and validate AI-powered tests with smart retry
       run: |
-        echo "🔄 Generating AI-powered tests..."
-        python ../universal-c-testgen/src/scripts/run_testgen.py . --api-key ${{ secrets.GEMINI_API_KEY }}
+        echo "� Running AI test generation with cost-effective retry logic..."
+        python ../universal-c-testgen/src/scripts/smart_retry.py . ../universal-c-testgen
+        RETRY_EXIT_CODE=$?
 
-        echo "🔍 Validating generated tests..."
-        python ../universal-c-testgen/src/scripts/validate_generated_tests.py tests/generated/ --no-exit
-        VALIDATION_EXIT_CODE=$?
-
-        if [ $VALIDATION_EXIT_CODE -ne 0 ]; then
-          echo "❌ Test validation failed - cannot proceed with build"
+        if [ $RETRY_EXIT_CODE -ne 0 ]; then
+          echo "❌ AI test generation failed after smart retries"
           exit 1
         fi
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
-    - name: Fix flaky AI-generated tests
-      run: |
-        echo "🔧 Applying fixes to AI-generated tests..."
-        python ../universal-c-testgen/src/scripts/fix_flaky_tests.py
 
     - name: Validate generated tests compile
       run: |
