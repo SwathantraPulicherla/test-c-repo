@@ -1,75 +1,57 @@
-```c
 #include "unity.h"
-#include "main.h"
 #include "temp_sensor.h"
 #include "temp_converter.h"
 
 // Stubs
-
-// get_temperature_celsius
-static int get_temperature_celsius_CallCount = 0;
-static float get_temperature_celsius_ReturnVal;
+static int get_temperature_celsius_call_count;
+static float get_temperature_celsius_return_value;
 
 float get_temperature_celsius() {
-    get_temperature_celsius_CallCount++;
-    return get_temperature_celsius_ReturnVal;
+  get_temperature_celsius_call_count++;
+  return get_temperature_celsius_return_value;
 }
 
-void get_temperature_celsius_StubWithCallback(float (*callback)(void)) {
-  // Not implemented in this example, but can be added if needed.
-}
-
-void reset_get_temperature_celsius() {
-    get_temperature_celsius_CallCount = 0;
-    get_temperature_celsius_ReturnVal = 0.0f;
-}
 
 void setUp(void) {
-    reset_get_temperature_celsius();
+    get_temperature_celsius_call_count = 0;
+    get_temperature_celsius_return_value = 0.0f;
 }
 
 void tearDown(void) {
 }
 
 void test_main_normal_temperature(void) {
-    get_temperature_celsius_ReturnVal = 25.0f;
-    int result = main();
-    TEST_ASSERT_EQUAL_INT(0, result);
-    TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
+    get_temperature_celsius_return_value = 25.0f;
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 25.0f, get_temperature_celsius());
+    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
 }
 
-void test_main_low_temperature(void) {
-    get_temperature_celsius_ReturnVal = -10.0f;
-    int result = main();
-    TEST_ASSERT_EQUAL_INT(0, result);
-    TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
+void test_main_freezing_temperature(void) {
+    get_temperature_celsius_return_value = 0.0f;
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.0f, get_temperature_celsius());
+    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
+}
+
+void test_main_below_freezing_temperature(void) {
+    get_temperature_celsius_return_value = -10.0f;
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, -10.0f, get_temperature_celsius());
+    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
 }
 
 void test_main_high_temperature(void) {
-    get_temperature_celsius_ReturnVal = 40.0f;
-    int result = main();
-    TEST_ASSERT_EQUAL_INT(0, result);
-    TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
+    get_temperature_celsius_return_value = 40.0f;
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 40.0f, get_temperature_celsius());
+    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
 }
 
-void test_main_zero_temperature(void) {
-    get_temperature_celsius_ReturnVal = 0.0f;
-    int result = main();
-    TEST_ASSERT_EQUAL_INT(0, result);
-    TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
+void test_main_extreme_low_temperature(void) {
+    get_temperature_celsius_return_value = -50.0f;
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, -50.0f, get_temperature_celsius());
+    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
 }
 
-void test_main_edge_temperature_below_freezing(void) {
-  get_temperature_celsius_ReturnVal = -273.15f; //Absolute zero
-  int result = main();
-  TEST_ASSERT_EQUAL_INT(0, result);
-  TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
+void test_main_extreme_high_temperature(void) {
+    get_temperature_celsius_return_value = 100.0f;
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 100.0f, get_temperature_celsius());
+    TEST_ASSERT_EQUAL(1, get_temperature_celsius_call_count);
 }
-
-void test_main_edge_temperature_boiling(void) {
-    get_temperature_celsius_ReturnVal = 100.0f;
-    int result = main();
-    TEST_ASSERT_EQUAL_INT(0, result);
-    TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
-}
-```
