@@ -42,3 +42,4 @@ For local testing:
 # Trigger CI with C syntax fix
 # Test validation script syntax fix
 # Test improved AI test generation
+# Test AI retry logic for validation failures
