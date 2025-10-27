@@ -1,8 +1,0 @@
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/ctestgen_lib.dir
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/main_app.dir
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/regenerate_tests.dir
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/coverage.dir
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/clean_coverage.dir
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/test.dir
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/edit_cache.dir
-C:/Users/SwathantraPulicherla/OneDrive - requisimus Holding GmbH/Desktop/AI_tools_project/workspaces/demo/test-repo/build/CMakeFiles/rebuild_cache.dir
