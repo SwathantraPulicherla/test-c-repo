@@ -49,68 +49,48 @@ jobs:
       run: |
         python ../universal-c-testgen/src/scripts/validate_source_code.py src/
 
-    - name: Generate and validate AI-powered tests with retry
+    - name: Generate and validate AI-powered tests
       run: |
-        MAX_RETRIES=3
-        RETRY_COUNT=0
+        echo "🔄 Generating AI-powered tests..."
+        python ../universal-c-testgen/src/scripts/run_testgen.py . --api-key ${{ secrets.GEMINI_API_KEY }}
 
-        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-          echo "🔄 Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES: Generating AI-powered tests..."
+        echo "🔍 Validating generated tests..."
+        python ../universal-c-testgen/src/scripts/validate_generated_tests.py tests/generated/ --no-exit
+        VALIDATION_EXIT_CODE=$?
 
-          # Generate tests
-          python ../universal-c-testgen/src/scripts/run_testgen.py . --api-key ${{ secrets.GEMINI_API_KEY }}
-
-          echo "🔍 Validating generated tests..."
-          # Validate tests (don't fail on error, capture exit code)
-          python ../universal-c-testgen/src/scripts/validate_generated_tests.py tests/generated/ --no-exit
-          VALIDATION_EXIT_CODE=$?
-
-          if [ $VALIDATION_EXIT_CODE -eq 0 ]; then
-            echo "✅ Test generation and validation successful!"
-            break
-          else
-            echo "❌ Validation failed on attempt $((RETRY_COUNT + 1))"
-            if [ $RETRY_COUNT -lt $((MAX_RETRIES - 1)) ]; then
-              echo "🔄 Retrying test generation..."
-              RETRY_COUNT=$((RETRY_COUNT + 1))
-              # Clean generated tests before retry
-              rm -rf tests/generated/
-              mkdir -p tests/generated/
-            else
-              echo "💥 Maximum retries ($MAX_RETRIES) exceeded. Build failed."
-              exit 1
-            fi
-          fi
-        done
+        if [ $VALIDATION_EXIT_CODE -ne 0 ]; then
+          echo "❌ Test validation failed - cannot proceed with build"
+          exit 1
+        fi
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-    - name: Build, run tests, and generate coverage
+    - name: Fix flaky AI-generated tests
       run: |
-        MAX_BUILD_RETRIES=2
-        BUILD_RETRY_COUNT=0
+        echo "� Applying fixes to AI-generated tests..."
+        python ../universal-c-testgen/src/scripts/fix_flaky_tests.py
 
-        while [ $BUILD_RETRY_COUNT -lt $MAX_BUILD_RETRIES ]; do
-          echo "🔨 Build attempt $((BUILD_RETRY_COUNT + 1))/$MAX_BUILD_RETRIES: Building test executables..."
+    - name: Build and run tests
+      run: |
+        echo "🔨 Building test executables..."
+        python ../universal-c-testgen/src/scripts/build_system.py . --run
+        BUILD_EXIT_CODE=$?
 
-          # Build, run tests, and generate coverage
-          if python ../universal-c-testgen/src/scripts/build_system.py . --run --coverage; then
-            echo "✅ Build and test execution successful!"
-            break
-          else
-            echo "❌ Build attempt $((BUILD_RETRY_COUNT + 1)) failed"
-            if [ $BUILD_RETRY_COUNT -lt $((MAX_BUILD_RETRIES - 1)) ]; then
-              echo "🔄 Retrying build process..."
-              BUILD_RETRY_COUNT=$((BUILD_RETRY_COUNT + 1))
-              # Clean build directory before retry
-              rm -rf build/
-              mkdir -p build/
-            else
-              echo "💥 Build failed after $MAX_BUILD_RETRIES attempts"
-              exit 1
-            fi
-          fi
-        done
+        if [ $BUILD_EXIT_CODE -ne 0 ]; then
+          echo "❌ Build or test execution failed"
+          exit 1
+        fi
+
+    - name: Generate coverage report
+      run: |
+        echo "📊 Generating coverage report..."
+        python ../universal-c-testgen/src/scripts/coverage_generator.py ./build ./src
+        COVERAGE_EXIT_CODE=$?
+
+        if [ $COVERAGE_EXIT_CODE -ne 0 ]; then
+          echo "❌ Coverage generation failed"
+          exit 1
+        fi
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4

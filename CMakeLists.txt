@@ -59,14 +59,14 @@ if(LCOV AND GENHTML AND NOT WIN32)
     # Create coverage directory
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/coverage-report)
 
-    # Coverage target
+    # Coverage target - simplified and robust
     add_custom_target(coverage
         # Clean previous coverage data
         COMMAND ${LCOV} --directory . --zerocounters
 
-        # Run all test executables dynamically
+        # Run test executables individually (more reliable than bash loop)
         COMMAND ${CMAKE_COMMAND} -E echo "Running test executables..."
-        COMMAND bash -c "for exe in test_*; do if [ -x \"$exe\" ]; then echo \"Running $exe...\"; ./$exe; fi; done"
+        COMMAND bash -c "find . -name 'test_*' -type f -executable -exec sh -c 'echo \"Running {}...\"; ./{}' \\; 2>/dev/null || true"
 
         # Capture coverage data
         COMMAND ${LCOV} --directory . --capture --output-file coverage.info
@@ -75,10 +75,11 @@ if(LCOV AND GENHTML AND NOT WIN32)
         COMMAND ${LCOV} --remove coverage.info '*/unity/*' '*/tests/*' '*/build/*' --output-file coverage_filtered.info
 
         # Generate HTML report
-        COMMAND ${GENHTML} coverage_filtered.info --output-directory ../coverage-report
+        COMMAND ${GENHTML} coverage_filtered.info --output-directory coverage-report
 
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Generating coverage report..."
+        VERBATIM
     )
 else()
     if(WIN32)
