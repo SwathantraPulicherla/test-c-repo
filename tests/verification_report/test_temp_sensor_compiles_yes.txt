@@ -4,10 +4,13 @@ VALIDATION REPORT
 FILE: test_temp_sensor.c
 COMPILES: Yes
 REALISTIC: Yes
-QUALITY: High
+QUALITY: Medium
 
-KEEP: [All tests]
-FIX: []
-REMOVE: []
+ISSUES:
+- setUp/tearDown present but stub reset functions not called
 
-Generated: 2025-10-27 09:00:36
+KEEP: [All tests - review issues manually]
+FIX: [Tests with compilation issues]
+REMOVE: [Tests with impossible scenarios]
+
+Generated: 2025-10-29 12:02:35
