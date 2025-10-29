@@ -36,7 +36,7 @@ void setUp(void) {
     // Redirect stdout to a temporary file
     fflush(stdout); // Flush any pending output to original stdout
     g_temp_output_file = freopen(TEMP_OUTPUT_FILENAME, "w+", stdout); // Redirect stdout
-    TEST_ASSERT_NOT_NULL_MESSAGE(g_temp_output_file, "Failed to redirect stdout for testing.");
+    TEST_ASSERT_TRUE(g_temp_output_file != NULL);
     setbuf(stdout, NULL); // Disable buffering for redirected stdout
 }
 
@@ -75,7 +75,7 @@ void test_main_normal_temperature_output(void) {
 
     char expected_output[100];
     // Assuming check_temperature_status for 25.5f returns "OK"
-    schar *captured_output = get_captured_output();
+    char *captured_output = get_captured_output();
     TEST_ASSERT_EQUAL_STRING(expected_output, captured_output);
     TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
 }
@@ -87,7 +87,7 @@ void test_main_low_temperature_output(void) {
 
     char expected_output[100];
     // Assuming check_temperature_status for 5.0f returns "LOW"
-    schar *captured_output = get_captured_output();
+    char *captured_output = get_captured_output();
     TEST_ASSERT_EQUAL_STRING(expected_output, captured_output);
     TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
 }
@@ -99,7 +99,7 @@ void test_main_high_temperature_output(void) {
 
     char expected_output[100];
     // Assuming check_temperature_status for 85.0f returns "HIGH"
-    schar *captured_output = get_captured_output();
+    char *captured_output = get_captured_output();
     TEST_ASSERT_EQUAL_STRING(expected_output, captured_output);
     TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
 }
@@ -111,7 +111,7 @@ void test_main_zero_temperature_output(void) {
 
     char expected_output[100];
     // Assuming check_temperature_status for 0.0f returns "LOW"
-    schar *captured_output = get_captured_output();
+    char *captured_output = get_captured_output();
     TEST_ASSERT_EQUAL_STRING(expected_output, captured_output);
     TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
 }
@@ -123,7 +123,7 @@ void test_main_negative_temperature_output(void) {
 
     char expected_output[100];
     // Assuming check_temperature_status for -10.0f returns "LOW"
-    schar *captured_output = get_captured_output();
+    char *captured_output = get_captured_output();
     TEST_ASSERT_EQUAL_STRING(expected_output, captured_output);
     TEST_ASSERT_EQUAL_INT(1, get_temperature_celsius_CallCount);
 }
