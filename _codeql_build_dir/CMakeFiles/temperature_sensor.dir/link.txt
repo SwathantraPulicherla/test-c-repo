@@ -1,0 +1,1 @@
+/home/runner/work/test-c-repo/.codeql-scratch/dbs/cpp/working/autobuild/bin/cc  -Wall -Werror -Wextra -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/temperature_sensor.dir/link.d CMakeFiles/temperature_sensor.dir/src/main.c.o CMakeFiles/temperature_sensor.dir/src/temp_converter.c.o CMakeFiles/temperature_sensor.dir/src/temp_sensor.c.o -o temperature_sensor
