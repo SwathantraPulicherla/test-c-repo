@@ -2,11 +2,15 @@
 build/
 *.exe
 *.obj
+*.o
 *.gcno
 *.gcda
 *.gcov
 *.a
 *.lib
+temperature_sensor
+_codeql_build_dir/
+_codeql_detected_source_root
 
 # Coverage reports
 coverage/
