@@ -2,11 +2,13 @@
 build/
 *.exe
 *.obj
+*.o
 *.gcno
 *.gcda
 *.gcov
 *.a
 *.lib
+temperature_sensor
 
 # Coverage reports
 coverage/
